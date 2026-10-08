@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "start": "mkdir -p .bin && (test -x .bin/opencode || (curl -fsSL -o /tmp/oc.tgz https://github.com/anomalyco/opencode/releases/download/v1.18.35/opencode-linux-x64.tar.gz && tar xzf /tmp/oc.tgz -C .bin && chmod +x .bin/opencode)) && .bin/opencode web --hostname 0.0.0.0 --port $PORT"
+    "start": "node install.js && .bin/opencode web --hostname 0.0.0.0 --port $PORT"
   },
-  "dependencies": {}
+  "dependencies": {
+    "tar": "^7.4.3"
+  }
 }
