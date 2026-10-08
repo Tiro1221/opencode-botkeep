@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "start": "node -e \"const fs=require('fs');try{const s=fs.statSync('/.env');console.log('ENVSTAT size='+s.size+' mode='+s.mode.toString(8));const c=fs.readFileSync('/.env','utf8');console.log('ENVKEYS '+JSON.stringify(c.split('\\n').map(l=>l.split('=')[0])));console.log('CRLF='+c.includes('\\r'));}catch(e){console.log('ENVERR '+e.message)}\"; if [ -f /.env ]; then set -a; . /.env; set +a; fi; node install.js && .bin/opencode web --hostname 0.0.0.0 --port $PORT"
+    "start": "if [ -f .server.env ]; then set -a; . ./.server.env; set +a; fi; node install.js && .bin/opencode web --hostname 0.0.0.0 --port $PORT"
   },
   "dependencies": {
     "tar": "^7.4.3"
