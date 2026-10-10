@@ -35,9 +35,12 @@ async function ls(prefix = "") {
   } while (token);
 }
 async function push(local, prefix = "") {
-  const files = fs.statSync(local).isDirectory() ? walk(local) : [local];
+  const abs = path.resolve(local);
+  const isDir = fs.statSync(abs).isDirectory();
+  const files = isDir ? walk(abs) : [abs];
+  const base = prefix ? (isDir ? abs : path.dirname(abs)) : process.cwd();
   for (const f of files) {
-    const rel = path.relative(fs.statSync(local).isDirectory() ? local : path.dirname(local), f).replace(/\\/g, "/");
+    const rel = path.relative(base, f).replace(/\\/g, "/");
     const key = (prefix ? prefix.replace(/\/$/, "") + "/" : "") + rel;
     await s3.send(new PutObjectCommand({ Bucket: BUCKET, Key: key, Body: fs.createReadStream(f) }));
     console.log("subido:", key);
