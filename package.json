@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "start": "if [ -f .server.env ]; then set -a; . ./.server.env; set +a; fi; node install.js && .bin/opencode web --hostname 0.0.0.0 --port ${PORT:-$SERVER_PORT}"
+    "start": "if [ -f .server.env ]; then set -a; . ./.server.env; set +a; fi; node install.js && (node bucket.js ls || true); .bin/opencode web --hostname 0.0.0.0 --port ${PORT:-$SERVER_PORT}"
   },
   "dependencies": {
     "tar": "^7.4.3",
