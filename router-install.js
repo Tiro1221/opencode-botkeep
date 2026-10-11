@@ -63,6 +63,10 @@ function fetchFile(url, dest, redirects = 0) {
   auto_https off
 }
 :${PORT} {
+  @routerhost host tiro-router.bot-keep.xyz
+  handle @routerhost {
+    reverse_proxy 127.0.0.1:3000
+  }
   handle /v1/* {
     reverse_proxy 127.0.0.1:3000
   }
