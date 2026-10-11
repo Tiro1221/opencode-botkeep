@@ -4,6 +4,14 @@
   "provider": {
     "groq": {},
     "cerebras": {},
-    "openrouter": {}
+    "openrouter": {},
+    "nous-bridge": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "Nous Portal (OAuth)",
+      "options": {
+        "baseURL": "http://127.0.0.1:8099/v1",
+        "apiKey": "local"
+      }
+    }
   }
 }

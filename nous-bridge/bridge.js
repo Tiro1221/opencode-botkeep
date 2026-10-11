@@ -68,7 +68,8 @@ function body(req) { return new Promise((res, rej) => { let b = ""; req.on("data
 
 const server = http.createServer(async (req, res) => {
   const u = new URL(req.url, "http://x");
-  if (req.headers.authorization !== `Bearer ${ROUTER_KEY}`) return send(res, 401, { error: "unauthorized" });
+  const loopback = ["127.0.0.1", "::1", "::ffff:127.0.0.1"].includes(req.socket.remoteAddress);
+  if (!loopback && req.headers.authorization !== `Bearer ${ROUTER_KEY}`) return send(res, 401, { error: "unauthorized" });
   try {
     if (u.pathname === "/setup/start") {
       const j = await form(`${PORTAL}/api/oauth/device/code`, { client_id: CLIENT_ID, scope: "inference:invoke" });
