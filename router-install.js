@@ -66,6 +66,9 @@ function fetchFile(url, dest, redirects = 0) {
   handle /v1/* {
     reverse_proxy 127.0.0.1:3000
   }
+  handle /router {
+    redir /router/ permanent
+  }
   handle /router/* {
     uri strip_prefix /router
     reverse_proxy 127.0.0.1:3000
