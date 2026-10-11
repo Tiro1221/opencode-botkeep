@@ -98,4 +98,13 @@ const server = http.createServer(async (req, res) => {
     return send(res, 404, { error: "solo /v1/models y /v1/chat/completions" });
   } catch (e) { return send(res, 500, { error: e.message }); }
 });
-server.listen(PORT, "127.0.0.1", () => console.log(`nous-bridge en 127.0.0.1:${PORT}`));
+server.listen(PORT, "127.0.0.1", async () => {
+  console.log(`nous-bridge en 127.0.0.1:${PORT}`);
+  if (state.access_token) { console.log("nous: sesion existente, lista"); return; }
+  try {
+    const j = await form(`${PORTAL}/api/oauth/device/code`, { client_id: CLIENT_ID, scope: "inference:invoke" });
+    pending = { device_code: j.device_code, deadline: Date.now() + parseInt(j.expires_in || "600", 10) * 1000 };
+    console.log("==== NOUS LOGIN ==== Entra a: " + (j.verification_uri_complete || j.verification_uri) + "  CODIGO: " + j.user_code + " ====");
+    pollLoop();
+  } catch (e) { console.log("nous setup error:", e.message); }
+});
