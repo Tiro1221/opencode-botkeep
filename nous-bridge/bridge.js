@@ -102,7 +102,16 @@ const server = http.createServer(async (req, res) => {
 });
 server.listen(PORT, "127.0.0.1", async () => {
   console.log(`nous-bridge en 127.0.0.1:${PORT}`);
-  if (state.access_token) { console.log("nous: sesion existente, lista"); return; }
+  if (state.access_token) {
+    console.log("nous: sesion existente, lista");
+    try {
+      const t = await ensureToken();
+      const r = await fetch(t.inference_base_url + "/v1/models", { headers: { Authorization: `Bearer ${t.access_token}` } });
+      const txt = await r.text();
+      console.log(`nous selftest: HTTP ${r.status} ${(txt || "").slice(0, 120)}`);
+    } catch (e) { console.log("nous selftest ERROR:", e.message); }
+    return;
+  }
   try {
     const j = await form(`${PORTAL}/api/oauth/device/code`, { client_id: CLIENT_ID, scope: "inference:invoke" });
     pending = { device_code: j.device_code, deadline: Date.now() + parseInt(j.expires_in || "600", 10) * 1000 };
