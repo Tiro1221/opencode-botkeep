@@ -83,7 +83,8 @@ const server = http.createServer(async (req, res) => {
       return send(res, 200, { status: "none" });
     }
     const s = await ensureToken();
-    const target = s.inference_base_url + u.pathname + u.search;
+    const p = u.pathname.includes("/v1/") ? u.pathname.slice(u.pathname.indexOf("/v1/")) : u.pathname;
+    const target = s.inference_base_url + p + u.search;
     if (req.method === "GET" && u.pathname === "/v1/models") {
       const r = await fetch(target, { headers: { Authorization: `Bearer ${s.access_token}` } });
       const j = await r.json();
