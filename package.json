@@ -3,10 +3,11 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "start": "if [ -f .server.env ]; then set -a; . ./.server.env; set +a; fi; node nous-bridge/bridge.js & node install.js && (node bucket.js ls || true); node router-install.js && (cd router && npm start > router.log 2>&1 &) && (./caddy run --config ./Caddyfile > caddy.log 2>&1 &) && .bin/opencode web --hostname 127.0.0.1 --port 4097"
+    "start": "if [ -f .server.env ]; then set -a; . ./.server.env; set +a; fi; node nous-bridge/bridge.js & node install.js && (node bucket.js ls || true); .bin/opencode web --hostname 0.0.0.0 --port ${PORT:-$SERVER_PORT}"
   },
   "dependencies": {
     "tar": "^7.4.3",
-    "@aws-sdk/client-s3": "^3.600.0"
+    "@aws-sdk/client-s3": "^3.600.0",
+    "xlsx": "^0.18.5"
   }
 }
