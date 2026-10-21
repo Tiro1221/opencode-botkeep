@@ -39,15 +39,23 @@ function esLlm(ruta) {
   return false;
 }
 
-function resolver(ruta) {
+function esAliasRouter(host) {
+  return String(host || "").toLowerCase().startsWith("tiro-router.");
+}
+
+function resolver(ruta, host) {
   const p = String(ruta || "/");
   const limpia = p.split("?")[0];
   if (esErp(limpia)) return { dst: ERP, path: p };
+  if (limpia === "/panel" || limpia === "/panel/" || limpia === "/admin" || limpia === "/admin/") {
+    return { dst: LLM, path: "/" };
+  }
   if (limpia === "/router" || limpia.startsWith("/router/")) {
     const resto = p.slice("/router".length);
     return { dst: LLM, path: resto === "" ? "/" : resto };
   }
   if (esLlm(limpia)) return { dst: LLM, path: p };
+  if (esAliasRouter(host)) return { dst: LLM, path: p };
   return { dst: WEB, path: p };
 }
 
@@ -179,7 +187,7 @@ const server = http.createServer((req, res) => {
     return res.end();
   }
 
-  const t = resolver(req.url);
+  const t = resolver(req.url, req.headers.host);
   const esWeb = t.dst === WEB;
 
   if (esWeb && !autenticado(req)) {
@@ -206,7 +214,7 @@ const server = http.createServer((req, res) => {
 });
 
 server.on("upgrade", (req, socket, head) => {
-  const t = resolver(req.url);
+  const t = resolver(req.url, req.headers.host);
   if (t.dst === WEB && !autenticado(req)) return socket.destroy();
   const cab = Object.assign({}, req.headers);
   if (t.dst === WEB && AUTH_PASS) cab.authorization = "Basic " + AUTH_B64;
