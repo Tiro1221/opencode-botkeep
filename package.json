@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "start": "if [ -f .server.env ]; then set -a; . ./.server.env; set +a; fi; export TMPDIR=\"${TMPDIR:-$PWD/.cache/tmp}\"; mkdir -p \"$TMPDIR\"; npm install --omit=dev --no-audit --no-fund && node install.js && node router-setup.js && (cd router && npm start >> .cache/router.log 2>&1 &) && ( (node install-tailscale.js >> .cache/pc-tunnel.log 2>&1; sh pc-tunnel.sh >> .cache/pc-tunnel.log 2>&1) & ) && (node bucket.js ls || true) && (node uploads/server.js >> uploads/server.log 2>&1 &) && (node nous-bridge/bridge.js &) && (node router.js &) && (node warmup.js &) && .bin/opencode web --hostname 0.0.0.0 --port ${OPENCODE_PORT:-4097}"
+    "start": "if [ -f .server.env ]; then set -a; . ./.server.env; set +a; fi; export TMPDIR=\"${TMPDIR:-$PWD/.cache/tmp}\"; mkdir -p \"$TMPDIR\"; npm install --omit=dev --no-audit --no-fund && node install.js && node router-setup.js && ( (cd router && npm start) >> .cache/router.log 2>&1 & ) && ( (node install-tailscale.js >> .cache/pc-tunnel.log 2>&1; sh pc-tunnel.sh >> .cache/pc-tunnel.log 2>&1) & ) && (node bucket.js ls || true) && (node uploads/server.js >> uploads/server.log 2>&1 &) && (node nous-bridge/bridge.js &) && (node router.js &) && (node warmup.js &) && .bin/opencode web --hostname 0.0.0.0 --port ${OPENCODE_PORT:-4097}"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.600.0",
