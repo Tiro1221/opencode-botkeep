@@ -1,7 +1,8 @@
 {
   "$schema": "https://opencode.ai/config.json",
   "theme": "system",
-  "small_model": "nous-bridge/stepfun/step-5-preview",
+  "model": "groq/openai/gpt-oss-120b",
+  "small_model": "groq/openai/gpt-oss-20b",
   "provider": {
     "groq": {},
     "cerebras": {},
