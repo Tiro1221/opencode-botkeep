@@ -46,16 +46,15 @@ function esAliasRouter(host) {
 function resolver(ruta, host) {
   const p = String(ruta || "/");
   const limpia = p.split("?")[0];
+  if (esAliasRouter(host)) return { dst: LLM, path: p };
   if (esErp(limpia)) return { dst: ERP, path: p };
-  if (limpia === "/panel" || limpia === "/panel/" || limpia === "/admin" || limpia === "/admin/") {
-    return { dst: LLM, path: "/" };
-  }
-  if (limpia === "/router" || limpia.startsWith("/router/")) {
-    const resto = p.slice("/router".length);
-    return { dst: LLM, path: resto === "" ? "/" : resto };
+  for (const base of ["/panel", "/admin", "/router"]) {
+    if (limpia === base || limpia.startsWith(base + "/")) {
+      const resto = p.slice(base.length);
+      return { dst: LLM, path: resto === "" ? "/" : resto };
+    }
   }
   if (esLlm(limpia)) return { dst: LLM, path: p };
-  if (esAliasRouter(host)) return { dst: LLM, path: p };
   return { dst: WEB, path: p };
 }
 
@@ -185,6 +184,13 @@ const server = http.createServer((req, res) => {
   if (limpia === "/OpenCode" || limpia === "/OpenCode/" || limpia === "/opencode" || limpia === "/opencode/") {
     res.writeHead(302, { location: "/", "cache-control": "no-store" });
     return res.end();
+  }
+
+  for (const base of ["/panel", "/admin", "/router"]) {
+    if (limpia === base) {
+      res.writeHead(302, { location: base + "/", "cache-control": "no-store" });
+      return res.end();
+    }
   }
 
   const t = resolver(req.url, req.headers.host);
