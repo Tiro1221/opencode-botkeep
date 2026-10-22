@@ -1,5 +1,6 @@
 {
   "$schema": "https://opencode.ai/config.json",
+  "autoupdate": false,
   "theme": "system",
   "model": "groq/openai/gpt-oss-120b",
   "small_model": "groq/openai/gpt-oss-20b",

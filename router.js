@@ -1,11 +1,13 @@
 const http = require("http");
 const net = require("net");
 const crypto = require("crypto");
+const fs = require("fs");
+const path = require("path");
 
 const PUERTO = Number(process.env.SERVER_PORT || 35791);
 const ERP = { host: "127.0.0.1", port: Number(process.env.ERP_PORT || 8081) };
 const WEB = { host: "127.0.0.1", port: Number(process.env.OPENCODE_PORT || 4097) };
-const LLM = { host: "127.0.0.1", port: Number(process.env.AICLIENT_PORT || 3000) };
+const LLM = { host: "127.0.0.1", port: Number(process.env.NINE_PORT || 3000) };
 
 const AUTH_USER = process.env.OPENCODE_SERVER_USERNAME || "opencode";
 const AUTH_PASS = process.env.OPENCODE_SERVER_PASSWORD || "";
@@ -203,6 +205,16 @@ const server = http.createServer((req, res) => {
   }
 
   const cab = Object.assign({}, req.headers, { host: t.dst.host + ":" + t.dst.port });
+  if (t.dst === LLM) {
+    cab["x-forwarded-host"] = req.headers.host;
+    cab["x-forwarded-proto"] = "https";
+    if (process.env.ROUTER_API_KEY && cab.authorization === "Bearer " + process.env.ROUTER_API_KEY) {
+      try {
+        const internal = JSON.parse(fs.readFileSync(path.join(__dirname, ".nine-data", "edge-key.json"), "utf8"));
+        cab.authorization = "Bearer " + internal.key;
+      } catch { res.writeHead(503); return res.end("router initializing"); }
+    }
+  }
   if (esWeb && AUTH_PASS) cab.authorization = "Basic " + AUTH_B64;
 
   const pr = http.request(

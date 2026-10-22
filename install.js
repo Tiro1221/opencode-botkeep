@@ -36,6 +36,7 @@ get(URL)
   .then(() => tar.x({ file: TMP, C: DIR }))
   .then(() => {
     fs.chmodSync(BIN, 0o755);
+    try { fs.unlinkSync(TMP); } catch {}
     console.log("opencode descargado en .bin/opencode");
   })
   .catch((e) => {

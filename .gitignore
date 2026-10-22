@@ -3,3 +3,5 @@ node_modules/
 .server.env
 *.log
 .bin/
+.nine-runtime/
+.nine-data/
